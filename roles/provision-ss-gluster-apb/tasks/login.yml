@@ -1,0 +1,7 @@
+---
+- name: Login As Super User
+  command: "oc login -u developer -p developer"
+  #when: cluster=="openshift"
+
+- name: Change project to {{ namespace }}
+command: "oc project default"

@@ -1,0 +1,143 @@
+##############################################################################
+## Provision ss-gluster
+## This role executes much of the needed functionality to provision an
+## application using an Ansible Playbook Bundle.  Included in the comments
+## below are some sample resources for getting started deploying an application
+## to OpenShift.
+##############################################################################
+
+---
+- include: "login.yml"
+
+- name: Build Storageclass
+  template:
+    src: ss-gluster-storageclass.yaml
+    dest: /tmp/ss-gluster-storageclass.yaml
+
+#- name: sleep  for debugging
+#  command: sleep 1000
+
+- name: show storageclass.yaml
+  command: cat /tmp/ss-gluster-storageclass.yaml
+  register: debug_out
+- name: Show generated storageclass
+  debug:
+    msg: "{{ debug_out.stdout }}"
+
+- name: Provision Storageclass
+  shell: oc create -f /tmp/ss-gluster-storageclass.yaml
+  register: debug_out
+- name: Show generated storageclass
+  debug:
+    msg: "{{ debug_out.stdout }}"
+
+
+- name: Build service
+  template:
+    src: ss-gluster-service.yaml
+    dest: /tmp/ss-gluster-service.yaml
+
+### Debug
+- name: Debug generated service
+  command: cat /tmp/ss-gluster-service.yaml
+  register: debug_out
+- name: Show generated service
+  debug:
+    msg: "{{ debug_out.stdout }}"
+
+- name: Provision Service
+  shell: oc create -f /tmp/ss-gluster-service.yaml
+  register: debug_out
+- name: Show generated service
+  debug:
+    msg: "{{ debug_out.stdout }}"
+
+
+- name: Build StatefulSet
+  template:
+    src: ss-gluster-statefulset.yaml
+    dest: /tmp/ss-gluster-statefulset.yaml
+
+### Debug
+- name: Debug generated StatefulSet
+  command: cat /tmp/ss-gluster-statefulset.yaml
+  register: debug_out
+- name: Show generated template
+  debug:
+    msg: "{{ debug_out.stdout }}"
+
+- name: Provision StatefulSet
+  command: oc create -f /tmp/ss-gluster-statefulset.yaml
+  register: debug_out
+- name: Show generated template
+  debug:
+    msg: "{{ debug_out.stdout }}"
+
+
+##############################################################################
+## An OpenShift Origin deployment configuration provides a replication
+## controller, spins up pods, and also provides the ability to transition from
+## one deployment of an image to a new one.
+## https://docs.openshift.org/latest/architecture/core_concepts/deployments.html#deployments-and-deployment-configurations
+##############################################################################
+#- name: create deployment config
+#  openshift_v1_deployment_config:
+#    name: ss-gluster
+#    namespace: '{{ namespace }}'
+#    labels:
+#      app: ss-gluster
+#      service: ss-gluster
+#    replicas: 1
+#    selector:
+#      app: ss-gluster
+#      service: ss-gluster
+#    spec_template_metadata_labels:
+#      app: ss-gluster
+#      service: ss-gluster
+#    containers:
+#    - env:
+#      image: docker.io/ansibleplaybookbundle/hello-world:latest # replace with your application image
+#      name: ss-gluster
+#      ports:
+#      - container_port: 8080
+#        protocol: TCP
+
+
+##############################################################################
+## A Kubernetes service serves as an internal load balancer.  It identifies a
+## set of replicated pods in order to proxy the connections it receives to them.
+## https://docs.openshift.org/latest/architecture/core_concepts/pods_and_services.html#services
+##############################################################################
+#- name: create ss-gluster service
+#  k8s_v1_service:
+#    name: ss-gluster
+#    namespace: '{{ namespace }}'
+#    labels:
+#      app: ss-gluster
+#      service: ss-gluster
+#    selector:
+#      app: ss-gluster
+#      service: ss-gluster
+#    ports:
+#      - name: web
+#        port: 80
+#        target_port: 8080
+
+
+##############################################################################
+## An OpenShift Origin route exposes a service at a host name, so that external
+## clients can reach it by name. Each route consists of a name, a service
+## selector, and an optional security configuration.
+## https://docs.openshift.org/latest/architecture/networking/routes.html
+##############################################################################
+#- name: create ss-gluster route
+#  openshift_v1_route:
+#    name: ss-gluster
+#    namespace: '{{ namespace }}'
+#    labels:
+#      app: ss-gluster
+#      service: ss-gluster
+#    to_name: ss-gluster
+#    spec_port_target_port: web
+
+
