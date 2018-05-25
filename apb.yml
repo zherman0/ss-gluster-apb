@@ -4,7 +4,7 @@ description: Create gluster storage using stateful sets
 bindable: False
 async: optional
 metadata:
-  displayName: ss-gluster
+  displayName: ss-gluster (APB)
   dependencies: []
 plans:
   - name: default

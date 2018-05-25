@@ -4,4 +4,4 @@
   #when: cluster=="openshift"
 
 - name: Change project to {{ namespace }}
-  command: "oc project default"
+  command: "oc project glusterfs"
