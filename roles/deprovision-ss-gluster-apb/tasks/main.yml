@@ -14,7 +14,7 @@
   with_items:
   - kind: "all,svc,deploy,secret,sc,pvc,statefulsets"
     selector: "glusterfs"
-failed_when: False
+  failed_when: False
 
 ##############################################################################
 ## Deprovision a route

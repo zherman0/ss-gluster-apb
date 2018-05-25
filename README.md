@@ -9,11 +9,11 @@ docker run --rm --net=host \
 -v $HOME/.kube:/opt/apb/.kube:z \
 -u $UID \
 docker.io/zherman/ss-gluster-apb \
-provision --extra-vars 'namespace=default'
+provision --extra-vars 'namespace=glusterfs'
 
 ##Taking it down
 docker run --rm --net=host \
 -v $HOME/.kube:/opt/apb/.kube:z \
 -u $UID \
 docker.io/zherman/ss-gluster-apb \
-deprovision --extra-vars 'namespace=default'
+deprovision --extra-vars 'namespace=glusterfs'
