@@ -145,7 +145,7 @@ spec:
       name: glusterfs-state
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: gluster
+      storageClassName: glusterfs
       resources:
         requests:
           storage: 5Gi
@@ -153,7 +153,7 @@ spec:
       name: glusterd-state
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: gluster
+      storageClassName: glusterfs
       resources:
         requests:
           storage: 20Gi
@@ -161,7 +161,7 @@ spec:
       name: glusterfs-data0
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: gluster
+      storageClassName: glusterfs
       resources:
         requests:
           storage: 80Gi
