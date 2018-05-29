@@ -1,6 +1,6 @@
 ---
 kind: StatefulSet
-apiVersion: apps/v1beta2  # change this to v1beta1 for OCP 3.6
+apiVersion: apps/v1beta2
 metadata:
   name: glusterfs
   labels:
