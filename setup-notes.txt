@@ -1,0 +1,40 @@
+Setting up local registry (or whatever registry)
+* After ansible service broker is installed using add-asb.sh *
+
+oc login -u system:admin
+oc get configmap broker-config -n ansible-service-broker -o yaml
+oc edit configmap broker-config
+registry:
+      - type: dockerhub
+        name: dh
+        url: https://registry.hub.docker.com
+        org: ansibleplaybookbundle
+        tag: latest
+        white_list:
+          - '.*-apb$'
+      - type: local_openshift
+        name: localregistry
+        namespaces: ['openshift']
+        white_list:
+            - ".*"
+
+oc rollout latest ansible-service-broker -n ansible-service-broker
+
+oc adm policy add-cluster-role-to-user cluster-admin developer
+oc adm policy add-cluster-role-to-user access-asb-role developer
+
+oc login -u developer
+
+Need to set HostDirVolume and privaleged Containers
+oc edit scc restricted  --> https://docs.openshift.org/latest/admin_guide/manage_scc.html#use-the-hostpath-volume-plugin
+set HostDirVolume and privContainer = true
+
+If you have issues with pushing images to local registry pod:
+curl "https://raw.githubusercontent.com/ansibleplaybookbundle/ansible-playbook-bundle/master/templates/openshift-permissions.template.yaml" | oc process -p USER=developer -f - | oc create -f -
+
+oc describe routes ansible-service-broker -n ansible-service-broker
+apb push --broker 10.129.0.9:1338  # value from describe above
+apb list --broker 10.129.0.9:1338
+
+Check if cluster service class for your apb is there:
+kubectl get clusterserviceclass -o custom-columns=Name:spec.externalName,ID:spec.externalID,BrokerName:spec.clusterServiceBrokerName

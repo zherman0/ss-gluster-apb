@@ -1,0 +1,36 @@
+#This statefulset example runs in AWS. You need the following format if you are using openshift-ansible to install
+#git clone https://github.com/openshift/openshift-ansible.git
+#look at readme for pre-reqs
+#cd openshift-ansible
+#sudo ansible-playbook -i ~/myhosts playbooks/prerequisites.yml
+#sudo ansible-playbook -i ~/myhosts playbooks/deploy_cluster.yml
+
+[OSEv3:children]
+masters
+nodes
+etcd
+
+[OSEv3:vars]
+# SSH user, this user should allow ssh based auth without requiring a password
+ansible_ssh_user=root
+ansible_become=true
+openshift_deployment_type=origin
+openshift_disable_check=docker_storage
+openshift_clusterid=zherman-cluster
+openshift_cloudprovider_kind=aws
+#openshift_master_identity_providers=[{'name': 'htpasswd_auth','login': 'true', 'challenge': 'true','kind': 'HTPasswdPasswordIdentityProvider',}]
+openshift_cloudprovider_aws_access_key=XXXXXXXXXXXXXXXXXX
+openshift_cloudprovider_aws_secret_key=XXXXXXXXXXXXXXXXXX
+ansible_service_broker_local_registry_whitelist=['.*-apb$']
+
+[masters]
+172.31.49.235  openshift_hostname=ip-172-31-49-235.ec2.internal
+
+# host group for etcd
+[etcd]
+172.31.49.235  openshift_hostname=ip-172-31-49-235.ec2.internal
+
+[nodes]
+172.31.48.174  openshift_hostname=ip-172-31-48-174.ec2.internal  openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+172.31.52.170  openshift_hostname=ip-172-31-52-170.ec2.internal openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+172.31.54.153  openshift_hostname=ip-172-31-54-153.ec2.internal openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
